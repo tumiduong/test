@@ -1,17 +1,13 @@
 <template>
   <div id="app">
-    <Upload/>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Upload from './components/Upload.vue'
 
 export default {
   name: 'App',
-  components: {
-    Upload
-  }
 }
 </script>
 

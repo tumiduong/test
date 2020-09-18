@@ -5,6 +5,7 @@ import indexRouter from './routes/index';
 import customersRouter from './routes/customers';
 
 const app = express();
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

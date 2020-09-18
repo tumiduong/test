@@ -28,7 +28,6 @@
       <div class="example-btn">
         <file-upload
           post-action="/customers"
-          accept="pdf"
           :drop="true"
           :drop-directory="true"
           v-model="files"
