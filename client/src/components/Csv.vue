@@ -1,6 +1,6 @@
 <template>
-  <div class="example-drag">
-hi
+  <div v-if='newTemplate.length'>
+    <ul v-bind:key='column.left' v-for="column of newTemplate">{{ column.left }}</ul>
   </div>
 </template>
 
@@ -8,7 +8,11 @@ hi
 
 
 export default {
-
+  name: 'Csv',
+  props: {
+    fileRows: Array,
+    newTemplate: Array
+  }
 }
 </script>
 

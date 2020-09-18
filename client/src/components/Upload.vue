@@ -7,8 +7,7 @@
           <span>{{file.size}}</span> -
           <button class="btn btn-danger" @click.prevent="$refs.upload.remove(file)">Remove</button>
           <span v-if="file.error">{{file.error}}</span>
-          <span v-else-if="file.success">success</span>
-          <span v-else-if="file.active">active</span>
+          <span v-else-if="file.active">Uploading..</span>
           <span v-else></span>
         </li>
       </ul>
@@ -31,6 +30,7 @@
           :drop="true"
           :drop-directory="true"
           v-model="files"
+          @input-filter="inputFilter"
           ref="upload">
         </file-upload>
         <button type="button" class="btn btn-success" v-if="!$refs.upload || !$refs.upload.active" @click.prevent="$refs.upload.active = true">
@@ -48,12 +48,21 @@
 import FileUpload from 'vue-upload-component';
 
 export default {
+  name: 'Upload',
   components: {
     FileUpload,
   },
   data() {
     return {
       files: [],
+    }
+  },
+  methods: {
+    inputFilter(newFile) {
+      if (newFile && newFile.success) {
+        this.$emit('status', true)
+        this.$emit('file-data', newFile.response)
+      }
     }
   }
 }
