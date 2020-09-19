@@ -51,7 +51,7 @@ export default {
 
       if (category.score <= 0.7) {
         semantics.push({id: rightID, classname: 'hide'})
-        tooltips.push({target: 'tooltip-target-' + index, message: `This scored ${(category.score * 100).toFixed(1).toString()}%, is this correct?`})
+        tooltips.push({target: 'tooltip-target-' + index, message: `This is ${(category.score * 100).toFixed(1).toString()}% similar, is this correct?`})
         index++;
       }
     }
