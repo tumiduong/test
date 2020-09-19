@@ -1,48 +1,89 @@
 <template>
-  <div v-if='newTemplate.length'>
-    <ul v-bind:key='column.left' v-for="column of newTemplate">{{ column.left }}</ul>
+  <div class='container' v-if='newTemplate.length'>
+    <workflow-chart
+      :transitions="transitions"
+      :states="states"
+      :stateSemantics="stateSemantics"
+      />
+      <div v-if='tooltips.length'>
+        <div v-bind:key='tooltip.target' v-for='tooltip of tooltips'>
+          <b-tooltip show='true' v-bind:target='tooltip.target' triggers='manual' placement='bottom'>
+            {{ tooltip.message }}
+            <button>Yes</button>
+            <button>No</button></b-tooltip>
+        </div>
+      </div>
   </div>
 </template>
 
 <script>
-
+import WorkflowChart from 'vue-workflow-chart';
+import { BTooltip } from 'bootstrap-vue';
 
 export default {
   name: 'Csv',
   props: {
     fileRows: Array,
     newTemplate: Array
+  },
+  components: {
+    WorkflowChart, BTooltip
+  },
+  data() {
+    const boxes = [];
+    const scores = [];
+    const semantics = [];
+    const tooltips = [];
+    let index = 0;
+
+    for (const category of this.newTemplate) {
+      const leftID = category.left + category.column + '-L';
+      const rightID = category.right + category.column + '-R';
+
+      boxes.push({id: leftID, label: category.left}, {id: rightID, label: category.right});
+
+      scores.push({
+          "id": category.left + category.right,
+          "label": (category.score * 100).toFixed(1).toString() + '%',
+          "target": rightID,
+          "source": leftID,
+      })
+
+      if (category.score <= 0.7) {
+        semantics.push({id: rightID, classname: 'hide'})
+        tooltips.push({target: 'tooltip-target-' + index, message: `This scored ${(category.score * 100).toFixed(1).toString()}%, is this correct?`})
+        index++;
+      }
+    }
+
+    return {
+      states: boxes,
+      transitions: scores,
+      stateSemantics: semantics,
+      tooltips
+    }
+  },
+  mounted() {
+    const lowScoreDivs = document.getElementsByClassName('vue-workflow-chart-transition-label-hide');
+    let index = 0;
+
+    for (const div of lowScoreDivs) {
+      div.id = 'tooltip-target-' + index;
+      index++;
+    }
   }
 }
 </script>
 
 <style>
-.example-drag label.btn {
-  margin-bottom: 0;
-  margin-right: 1rem;
+@import '~vue-workflow-chart/dist/vue-workflow-chart.css';
+
+.vue-workflow-chart-transition-arrow-hide, .vue-workflow-chart-transition-path-hide {
+  opacity: 0%;
 }
-.example-drag .drop-active {
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  position: fixed;
-  z-index: 9999;
-  opacity: .6;
-  text-align: center;
-  background: #000;
+
+.vue-workflow-chart-transition-label-hide {
+  opacity: 50%;
 }
-.example-drag .drop-active h3 {
-  margin: -.5em 0 0;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-  font-size: 40px;
-  color: #fff;
-  padding: 0;
-}
+
 </style>

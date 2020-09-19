@@ -68,7 +68,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .example-drag label.btn {
   margin-bottom: 0;
   margin-right: 1rem;

@@ -43,7 +43,7 @@ customersRouter.post('/', upload.single('file'), (req, res) => {
 'city', 'state', 'country', 'zip', 'note', 'homephone', 'workphone', 'mobphone', 'fax', 'pager']
 
   const fset = FuzzySet(rightValues)
-  
+
   const fileRows = [];
   csv.parseFile(path)
     .on("data", function (data) {
@@ -53,9 +53,11 @@ customersRouter.post('/', upload.single('file'), (req, res) => {
       fs.unlinkSync(path);
 
       const newVals = [];
+      let index = 0;
       for (const val of leftValues) {
         const value = fset.get(val)[0];
-        newVals.push({left: val, right: value[1], score: value[0]})
+        newVals.push({column: index, left: val, right: value[1], score: value[0]})
+        index++;
       }
 
       res.json({
