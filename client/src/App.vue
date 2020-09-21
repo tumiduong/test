@@ -25,10 +25,8 @@ export default {
     changeStatus(status) {
       this.status = status;
     },
-    
     setData(data) {
       this.fileData = data;
-      console.log(this.fileData)
     }
   }
 }
