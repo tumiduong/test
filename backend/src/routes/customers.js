@@ -34,7 +34,7 @@ customersRouter.post('/', (req, res) => {
   const hashKey = hash([fileName, customerEmail]);
 
   const index = fileRows.length && fileRows[0].indexOf(left);
-  const data = fileRows.map(x => x[index]).slice(1);
+  const data = fileRows.map(x => x[index]).slice(1).filter(x => x.length);
   const samples = shuffleArray([...data]).slice(0, 3).toString();
 
   const columns = 'file_key, left_value, right_value, score, samples, created_at';
@@ -42,7 +42,9 @@ customersRouter.post('/', (req, res) => {
 
   customersModel.insertWithReturn(columns, values)
     .then(result => res.json(result.rows))
-    .catch(() => res.sendStatus(500))
+    .catch((error) => {
+      console.log(error)
+      res.sendStatus(500)})
 
 });
 
