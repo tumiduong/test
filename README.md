@@ -9,7 +9,7 @@ cd client
 npm install
 ```
 
-#### Run the server.
+### Run the server.
 ```
 npm run serve
 ```
