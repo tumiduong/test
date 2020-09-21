@@ -42,7 +42,7 @@ customersRouter.post('/', (req, res) => {
 
   customersModel.insertWithReturn(columns, values)
     .then(result => res.json(result.rows))
-    .catch(error => res.json(error.stack))
+    .catch(() => res.sendStatus(500))
 
 });
 
@@ -89,7 +89,7 @@ customersRouter.post('/upload', upload.single('file'), (req, res) => {
       })
     })
   } else {
-    res.sendStatus(500).json("Oops, something went wrong!")
+    res.sendStatus(500);
   }
 })
 

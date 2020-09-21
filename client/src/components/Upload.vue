@@ -70,6 +70,18 @@ export default {
         this.$emit('file-data', newFile.response);
       }
 
+      if (newFile && newFile.error && !newFile.active) {
+        this.$bvToast.toast('Something went wrong. Try again!', {
+          title: 'Oops!',
+          variant: 'danger',
+          solid: true,
+          toaster: 'b-toaster-bottom-right',
+          append: true,
+          autoHideDelay: 3000
+        });
+        this.$refs.upload.remove(newFile)
+      }
+
       if (newFile && !newFile.name.includes('.csv')) {
         this.error = true;
         this.$bvToast.toast('Please select a .csv file.', {
@@ -123,7 +135,7 @@ export default {
   border: 1px solid #70A9A1;
 }
 
-.btn-success:hover {
+.btn-success:hover, .btn-success:focus {
   background-color: #A8CFBD;
   border: 1px solid #A8CFBD;
 }
