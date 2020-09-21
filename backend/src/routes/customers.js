@@ -80,7 +80,7 @@ customersRouter.post('/upload', upload.single('file'), (req, res) => {
       let index = 0;
       for (const val of fileRows[0]) {
         const value = fset.get(val)[0];
-        newVals.push({id: index, left: val, right: value[1], score: value[0]})
+        newVals.push({id: index, left: val, right: value[1], score: value[0].toFixed(3)})
         index++;
       }
 
