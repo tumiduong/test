@@ -37,8 +37,8 @@ customersRouter.post('/', (req, res) => {
   const data = fileRows.map(x => x[index]).slice(1);
   const samples = shuffleArray([...data]).slice(0, 3).toString();
 
-  const columns = 'file_key, left_value, right_value, score, samples';
-  const values = `'${hashKey}', '${left}', '${right}', '${score}', '{${samples}}'`;
+  const columns = 'file_key, left_value, right_value, score, samples, created_at';
+  const values = `'${hashKey}', '${left}', '${right}', '${score}', '{${samples}}', '${new Date().toISOString()}'`;
 
   customersModel.insertWithReturn(columns, values)
     .then(result => res.json(result.rows))
@@ -47,7 +47,7 @@ customersRouter.post('/', (req, res) => {
 });
 
 customersRouter.post('/upload', upload.single('file'), (req, res) => {
-  const { path, originalname } = req.file;
+  const { path, originalname, mimetype } = req.file;
 
   const rightValues = [
     'customer_id', 'firstname',
@@ -61,14 +61,14 @@ customersRouter.post('/upload', upload.single('file'), (req, res) => {
     'fax_phone',   'pager_phone'
   ];
 
-  // check for csv or throw err
 
   const fset = FuzzySet(rightValues)
 
   fileRows = [];
   fileName = "";
 
-  csv.parseFile(path)
+  if (mimetype === 'application/vnd.ms-excel' || originalname.includes('.csv')) {
+    csv.parseFile(path)
     .on("data", function (data) {
       
       fileRows.push(data);
@@ -88,7 +88,9 @@ customersRouter.post('/upload', upload.single('file'), (req, res) => {
         newTemplate: newVals
       })
     })
-  
+  } else {
+    res.sendStatus(500).json("Oops, something went wrong!")
+  }
 })
 
 export default customersRouter;

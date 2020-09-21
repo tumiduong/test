@@ -20,6 +20,10 @@
 import WorkflowChart from 'vue-workflow-chart';
 import { BTooltip } from 'bootstrap-vue';
 import axios from 'axios';
+import { ToastPlugin } from 'bootstrap-vue';
+import Vue from 'vue';
+
+Vue.use(ToastPlugin)
 
 export default {
   name: 'Csv',
@@ -78,13 +82,26 @@ export default {
       this.$root.$emit('bv::hide::tooltip', target);
     },
     acceptTooltip(column, target) {
-      console.log(column)
       axios.post('/customers', column)
       .then(result => {
-        console.log(result)
+        console.log(result.data)
+        const label = document.getElementById(target)
+        label.style.opacity = 1;
+        label.parentElement.getElementsByClassName('vue-workflow-chart-transition-path-hide')[0].style.opacity = 1;
+        label.parentElement.getElementsByClassName('vue-workflow-chart-transition-arrow-hide')[0].style.opacity = 1;
+
         this.$root.$emit('bv::hide::tooltip', target);
       })
-      .catch(err => console.log(err))
+      .catch(() => {
+        this.$bvToast.toast('Oops!', {
+          title: 'Something went wrong. Try again!',
+          variant: 'danger',
+          solid: true,
+          toaster: 'b-toaster-bottom-right',
+          append: true,
+          autoHideDelay: 3000
+        });
+      })
       
     }
   }
@@ -94,12 +111,8 @@ export default {
 <style>
 @import '~vue-workflow-chart/dist/vue-workflow-chart.css';
 
-.container {
-  margin: auto;
-}
-
 div[data-v-3da956c2] {
-  margin: 15px 0px 100px 0px;
+  margin: 15px 0px 100px 10vw;
 }
 
 .vue-workflow-chart-transition-label {

@@ -1,20 +1,20 @@
 <template>
   <div class="example-drag">
-    <div class="upload text-center p-5">
+    <div class="upload">
       <ul v-if="files.length">
         <li v-for="(file) in files" :key="file.id">
-          <div class="file-info">
-            <span>{{file.name}}</span>
-            <button class="btn btn-danger" @click.prevent="$refs.upload.remove(file)">Remove</button>
+          <div class="file-info text-center drop-file">
+              <span>{{file.name}}</span>
+              <button class="btn btn-danger remove" @click.prevent="$refs.upload.remove(file)">Remove</button> 
           </div>
-          <b-alert show variant='warning' class='error-type' v-if="error">Please select a .csv file.</b-alert>
-          <p class="uploading" v-else-if="file.active">Uploading..</p>
+          
+            
         </li>
       </ul>
       <ul v-else>
-          <div class="text-center p-5">
-            <h4>Drop file anywhere to upload<br/>or</h4>
-            <label for="file" class="btn btn-lg btn-primary">Select File</label>
+          <div class="text-center drop-file">
+            <label for="file" class="btn btn-lg btn-primary">Select a file</label>
+            <h4>or drop anywhere to upload.</h4>
           </div>
       </ul>
 
@@ -47,12 +47,15 @@
 
 <script>
 import FileUpload from 'vue-upload-component';
-import { BAlert } from 'bootstrap-vue'
+import { ToastPlugin } from 'bootstrap-vue';
+import Vue from 'vue';
+
+Vue.use(ToastPlugin)
 
 export default {
   name: 'Upload',
   components: {
-    FileUpload, BAlert
+    FileUpload
   },
   data() {
     return {
@@ -63,14 +66,22 @@ export default {
   methods: {
     inputFilter(newFile) {
       if (newFile && newFile.success) {
-        this.$emit('status', true)
-        this.$emit('file-data', newFile.response)
+        this.$emit('status', true);
+        this.$emit('file-data', newFile.response);
       }
 
       if (newFile && !newFile.name.includes('.csv')) {
-        this.error = true
+        this.error = true;
+        this.$bvToast.toast('Please select a .csv file.', {
+          title: 'File type incorrect.',
+          variant: 'danger',
+          solid: true,
+          toaster: 'b-toaster-bottom-right',
+          append: true,
+          autoHideDelay: 3000
+        });
       } else if (newFile && newFile.name.includes('.csv')){
-        this.error = false
+        this.error = false;
       }
     }
   }
@@ -78,11 +89,43 @@ export default {
 </script>
 
 <style scoped>
-.error-type {
-  font-size: 14px;
-  width: 200px;
-  margin: auto;
-  margin-top: 15px;
+
+.example-drag {
+  padding: 25px;
+}
+
+.drop-file {
+  background-color: #fff;
+  padding: 50px;
+  border: 2px dashed #70A9A1;
+  border-radius: 15px;
+  height: 200px;
+  font-size: 18px;
+}
+
+.drop-file h4 {
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+.btn-primary {
+  background-color: #007C77;
+  border: 1px solid #007C77;
+}
+
+.btn-primary:hover {
+  background-color: #70A9A1;
+  border: 1px solid #70A9A1;
+}
+
+.btn-success {
+  background-color: #70A9A1;
+  border: 1px solid #70A9A1;
+}
+
+.btn-success:hover {
+  background-color: #A8CFBD;
+  border: 1px solid #A8CFBD;
 }
 
 .file-info {
@@ -91,15 +134,7 @@ export default {
   justify-content: center;
 }
 
-.uploading {
-  font-size: 12px;
-}
-
-.upload {
-  font-size: 18px;
-}
-
-.btn-danger {
+.remove {
   border-radius: 25px;
   font-size: 12px;
   margin: 0px 5px;
@@ -129,7 +164,7 @@ ul {
   z-index: 9999;
   opacity: .6;
   text-align: center;
-  background: #000;
+  background: #878787;
 }
 
 .example-drag .drop-active h3 {

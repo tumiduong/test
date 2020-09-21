@@ -33,4 +33,16 @@ export default {
 </script>
 
 <style>
+#app {
+  background-color: #F4F5F1;
+}
+
+body, html {
+  font-family: "Segoe UI";
+  background-color: #F4F5F1;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
 </style>
